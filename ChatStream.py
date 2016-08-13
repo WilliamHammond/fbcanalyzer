@@ -34,11 +34,10 @@ class ChatStream(object):
 
     def by_year_range(self, start, end):
         if start > end:
-            print "End must be larger than start"
-            return -1
-
+            raise Exception("Start year later than the end")
         return ChatStream([w for w in self.data if
-                          self.get_year_from_iso(w['date_time']) in range])
+                          self.get_year_from_iso(w['date_time']) in
+                          xrange(start, end)])
 
     def by_user(self, user):
         return ChatStream([w for w in self.data if w['user'] == user])
@@ -55,7 +54,7 @@ class ChatStream(object):
 
     def remove_punctuation(self):
         for entry in self.data:
-            entry['text'] = [w for w in entry['text'] if w not in PUNCTUATION]
+            entry["text"] = [w for w in entry['text'].split() if w not in PUNCTUATION]
         return ChatStream(self.data)
 
     def get_n_gram(self, n):
