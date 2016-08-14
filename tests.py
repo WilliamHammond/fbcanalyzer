@@ -2,6 +2,9 @@ import unittest
 from ChatStream import ChatStream
 
 
+MESSAGE_COUNT = 7
+
+
 def get_conversation():
     conversation = []
 
@@ -11,32 +14,6 @@ def get_conversation():
     conversation.append({u'text': u'The strokes?',
                          u'user': u'Hammond,William',
                          u'date_time': u'2016-07-30T14:50:00'})
-    conversation.append({u'text': u'Just realized the first record I every\
-                         bought for myself and one of my favorite albums ever,\
-                         is this it, turned 15 today',
-                         u'user': u'Kamath,Vijay',
-                         u'date_time': u'2016-07-30T14:38:00'})
-    conversation.append({u'text': u'Word', u'user': u'Kamath,Vijay',
-                         u'date_time': u'2016-07-30T13:41:00'})
-    conversation.append({u'text': u'Its a solid spot. $10 shock top pitchers',
-                         u'user': u'Hammond,William',
-                         u'date_time': u'2016-07-30T13:41:00'})
-    conversation.append({u'text': u"No, but we'll see. I saw his post.I'll be\
-                         down to go. Don't have plans tonight as of yet.\
-                         And I've got two weeks left",
-                         u'user': u'Kamath,Vijay',
-                         u'date_time': u'2016-07-30T13:37:00'})
-    conversation.append({u'text': u'We got rekt last night. Have you been to on\
-                         the hill tavern with joey',
-                         u'user': u'Hammond,William',
-                         u'date_time': u'2016-07-30T13:37:00'})
-    conversation.append({u'text': u'Hope you guys are doing something fun for\
-                         Ryan today', u'user': u'Kamath,Vijay',
-                         u'date_time': u'2016-07-30T13:36:00'})
-    conversation.append({u'text': u'Nice.', u'user': u'Kamath,Vijay',
-                         u'date_time': u'2016-07-30T13:35:00'})
-    conversation.append({u'text': u'Good', u'user': u'Hammond,William',
-                         u'date_time': u'2016-07-30T13:35:00'})
     conversation.append({u'text': u'Got a bloody Mary at the Jewish deli for\
                          brunch it was real goof', u'user': u'Hammond,William',
                          u'date_time': u'2016-07-30T13:35:00'})
@@ -91,6 +68,10 @@ class TestChatStream(unittest.TestCase):
         stream = get_conversation()
         year = stream.get_year_from_iso(stream.get_data()[0]["date_time"])
         self.assertEquals(year, 2016)
+
+    def test_message_count(self):
+        stream = get_conversation()
+        self.assertEqual(MESSAGE_COUNT, stream.get_message_count())
 
 if __name__ == "__main__":
     unittest.main()
