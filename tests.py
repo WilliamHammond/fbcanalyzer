@@ -3,6 +3,7 @@ from ChatStream import ChatStream
 
 
 MESSAGE_COUNT = 7
+WORD_COUNT = 14
 
 
 def get_conversation():
@@ -14,18 +15,12 @@ def get_conversation():
     conversation.append({u'text': u'The strokes?',
                          u'user': u'Hammond,William',
                          u'date_time': u'2016-07-30T14:50:00'})
-    conversation.append({u'text': u'Got a bloody Mary at the Jewish deli for\
-                         brunch it was real goof', u'user': u'Hammond,William',
+    conversation.append({u'text': u'the strokes?', u'user': u'Hammond,William',
                          u'date_time': u'2016-07-30T13:35:00'})
-    conversation.append({u'text': u'Also today is just beautiful. Perfect heat\
-                         and skies, but not too hot. Nothing better than\
-                         drinking a nice draft beer on a day like this.\
-                         Sipping a Boston lager and waiting for lunch',
+    conversation.append({u'text': u'the strokes?',
                          u'user': u'Kamath,Vijay',
                          u'date_time': u'2016-07-30T13:33:00'})
-    conversation.append({u'text': u"I totally get people voting from the heart\
-                         and forgetting the system, but Hillary is seriously\
-                         just everyone's scapegoat.",
+    conversation.append({u'text': u"the strokes?",
                          u'user': u'Kamath,Vijay',
                          u'date_time': u'2016-07-30T13:31:00'})
     conversation.append({u'text': u'The strokes?',
@@ -67,11 +62,15 @@ class TestChatStream(unittest.TestCase):
     def test_year_from_iso(self):
         stream = get_conversation()
         year = stream.get_year_from_iso(stream.get_data()[0]["date_time"])
-        self.assertEquals(year, 2016)
+        self.assertEqual(year, 2016)
 
     def test_message_count(self):
         stream = get_conversation()
         self.assertEqual(MESSAGE_COUNT, stream.get_message_count())
+
+    def test_word_count(self):
+        stream = get_conversation()
+        self.assertEqual(WORD_COUNT, stream.get_word_count())
 
 if __name__ == "__main__":
     unittest.main()

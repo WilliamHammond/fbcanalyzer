@@ -95,7 +95,10 @@ class ChatStream(object):
         return Set([w['user'] for w in self.data])
 
     def get_word_count(self):
-        return len(self.get_message_lst())
+        word_count = 0
+        for entry in self.data:
+            word_count += len(entry['text'].split())
+        return word_count
 
     def occurence_count_by_phrase(self, phrase):
         count = 0
