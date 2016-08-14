@@ -10,24 +10,24 @@ def get_conversation():
     conversation = []
 
     conversation.append({u'text': u'Ooohhhhh yeaaaah',
-                         u'user': u'Kamath,Vijay',
+                         u'user': u'user2',
                          u'date_time': u'2016-07-30T14:52:00'})
     conversation.append({u'text': u'The strokes?',
-                         u'user': u'Hammond,William',
+                         u'user': u'user1',
                          u'date_time': u'2016-07-30T14:50:00'})
-    conversation.append({u'text': u'the strokes?', u'user': u'Hammond,William',
+    conversation.append({u'text': u'the strokes?', u'user': u'user1',
                          u'date_time': u'2016-07-30T13:35:00'})
     conversation.append({u'text': u'the strokes? ? ! , .',
-                         u'user': u'Kamath,Vijay',
+                         u'user': u'user2',
                          u'date_time': u'2016-07-30T13:33:00'})
     conversation.append({u'text': u"the strokes?",
-                         u'user': u'Kamath,Vijay',
+                         u'user': u'user2',
                          u'date_time': u'2016-07-30T13:31:00'})
     conversation.append({u'text': u'The strokes?',
-                         u'user': u'Hammond,William',
+                         u'user': u'user1',
                          u'date_time': u'2015-07-30T14:50:00'})
     conversation.append({u'text': u'The strokes?',
-                         u'user': u'Hammond,William',
+                         u'user': u'user1',
                          u'date_time': u'2014-07-30T14:50:00'})
 
     return ChatStream(conversation)
@@ -82,6 +82,12 @@ class TestChatStream(unittest.TestCase):
             self.assertNotIn("?", msg["text"])
             self.assertNotIn(",", msg["text"])
             self.assertNotIn("!", msg["text"])
+
+    def test_get_users(self):
+        stream = get_conversation()
+
+        self.assertIn("user1", stream.get_users())
+        self.assertIn("user2", stream.get_users())
 
 if __name__ == "__main__":
     unittest.main()
