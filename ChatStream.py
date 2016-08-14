@@ -43,19 +43,32 @@ class ChatStream(object):
         return ChatStream([w for w in self.data if w['user'] == user])
 
     def remove_non_ascii(self):
+        new_data = []
         for entry in self.data:
-            entry['text'] = self.strip_non_ascii(entry['text'])
-        return ChatStream(self.data)
+            new_entry = dict(entry)
+            new_entry['text'] = self.strip_non_ascii(entry['text'])
+
+            new_data.append(new_entry)
+        return ChatStream(new_data)
 
     def remove_stop_words(self):
+        new_data = []
         for entry in self.data:
-            entry['text'] = [w for w in entry['text'] if w not in STOP_WORDS]
-        return ChatStream(self.data)
+            new_entry = dict(entry)
+            new_entry['text'] = [w for w in entry['text'] if
+                                 w not in STOP_WORDS]
+
+            new_data.append(new_entry)
+        return ChatStream(new_data)
 
     def remove_punctuation(self):
+        new_data = []
         for entry in self.data:
-            entry["text"] = [w for w in entry['text'].split() if w not in PUNCTUATION]
-        return ChatStream(self.data)
+            new_entry = dict(entry)
+            new_entry["text"] = [w for w in entry['text'].split() if
+                                 w not in PUNCTUATION]
+            new_data.append(new_entry)
+        return ChatStream(new_data)
 
     def get_n_gram(self, n):
         return list(ngrams(self.get_message_lst(), n))
