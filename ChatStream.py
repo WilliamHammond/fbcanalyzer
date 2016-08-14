@@ -4,6 +4,7 @@
 
 
 import string
+import re
 
 from nltk import Text
 from nltk.util import ngrams
@@ -65,8 +66,7 @@ class ChatStream(object):
         new_data = []
         for entry in self.data:
             new_entry = dict(entry)
-            new_entry["text"] = [w for w in entry['text'].split() if
-                                 w not in PUNCTUATION]
+            new_entry["text"] = re.split("\W+", entry["text"])
             new_data.append(new_entry)
         return ChatStream(new_data)
 
