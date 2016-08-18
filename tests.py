@@ -3,7 +3,7 @@ from ChatStream import ChatStream
 
 
 MESSAGE_COUNT = 7
-WORD_COUNT = 18
+WORD_COUNT = 19
 
 
 def get_conversation():
@@ -12,7 +12,7 @@ def get_conversation():
     conversation.append({u'text': u'Ooohhhhh yeaaaah',
                          u'user': u'user2',
                          u'date_time': u'2016-07-30T14:52:00'})
-    conversation.append({u'text': u'The strokes?',
+    conversation.append({u'text': u'The strokes strokes?',
                          u'user': u'user1',
                          u'date_time': u'2016-07-30T14:50:00'})
     conversation.append({u'text': u'the strokes?', u'user': u'user1',
@@ -92,7 +92,9 @@ class TestChatStream(unittest.TestCase):
     def test_get_most_common_word(self):
         stream = get_conversation()
 
-        print stream.get_most_common_words(2)
+        most_common = stream.remove_punctuation()\
+                            .get_most_common_words(1)[0][0]
+        self.assertEqual(most_common, "strokes")
 
 if __name__ == "__main__":
     unittest.main()

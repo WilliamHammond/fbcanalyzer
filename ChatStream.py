@@ -47,17 +47,26 @@ class ChatStream(object):
         new_data = []
         for entry in self.data:
             new_entry = dict(entry)
-            new_entry['text'] = self.strip_non_ascii(entry['text'])
+            new_entry['text'] = " ".join(self._strip_non_ascii(entry['text']))
 
             new_data.append(new_entry)
         return ChatStream(new_data)
+
+    def _strip_non_ascii(self, words):
+        return [w for w in words if self._word_is_ascii(w)]
+
+    def _word_is_ascii(self, word):
+        for c in word:
+            if ord(c) > 128:
+                return False
+        return True
 
     def remove_stop_words(self):
         new_data = []
         for entry in self.data:
             new_entry = dict(entry)
-            new_entry['text'] = [w for w in entry['text'] if
-                                 w not in STOP_WORDS]
+            new_entry['text'] = " ".join([w for w in entry['text'] if
+                                          w not in STOP_WORDS])
 
             new_data.append(new_entry)
         return ChatStream(new_data)
@@ -66,7 +75,7 @@ class ChatStream(object):
         new_data = []
         for entry in self.data:
             new_entry = dict(entry)
-            new_entry["text"] = re.split("\W+", entry["text"])
+            new_entry["text"] = " ".join(re.split("\W+", entry["text"]))
             new_data.append(new_entry)
         return ChatStream(new_data)
 
@@ -83,7 +92,7 @@ class ChatStream(object):
         return [msg['text'] for msg in self.data]
 
     def get_word_lst(self):
-        return self.flatten([w.split() for w in self.get_message_lst()])
+        return self._flatten([w.split() for w in self.get_message_lst()])
 
     def get_year_from_iso(self, iso_year):
         return datetime.strptime(iso_year, "%Y-%m-%dT%H:%M:%S").year
@@ -157,14 +166,5 @@ class ChatStream(object):
                 return (entry['user'], entry['date_time'], entry['text'])
         print "Phrase not found."
 
-    def flatten(self, lst):
+    def _flatten(self, lst):
         return [item for sublist in lst for item in sublist]
-
-    def strip_non_ascii(self, words):
-        return [w for w in words if self.word_is_ascii(w)]
-
-    def word_is_ascii(self, word):
-        for c in word:
-            if ord(c) > 128:
-                return False
-        return True
