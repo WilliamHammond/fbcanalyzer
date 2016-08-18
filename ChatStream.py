@@ -74,16 +74,16 @@ class ChatStream(object):
         return list(ngrams(self.get_message_lst(), n))
 
     def get_most_common_words(self, n):
-        return Counter(self.get_message_lst()).most_common(n)
-
-    def get_most_common_n_gram(self, n, num_grams):
-        return Counter(self.get_n_gram(n)).most_common(num_grams)
+        return Counter(self.get_word_lst()).most_common(n)
 
     def get_text(self):
         return Text(self.get_message_lst())
 
     def get_message_lst(self):
-        return self.flatten([w['text'] for w in self.data])
+        return [msg['text'] for msg in self.data]
+
+    def get_word_lst(self):
+        return self.flatten([w.split() for w in self.get_message_lst()])
 
     def get_year_from_iso(self, iso_year):
         return datetime.strptime(iso_year, "%Y-%m-%dT%H:%M:%S").year
@@ -95,10 +95,7 @@ class ChatStream(object):
         return Set([w['user'] for w in self.data])
 
     def get_word_count(self):
-        word_count = 0
-        for entry in self.data:
-            word_count += len(entry['text'].split())
-        return word_count
+        return len(self.get_word_lst())
 
     def occurence_count_by_phrase(self, phrase):
         count = 0

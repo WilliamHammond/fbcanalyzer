@@ -89,5 +89,10 @@ class TestChatStream(unittest.TestCase):
         self.assertIn("user1", stream.get_users())
         self.assertIn("user2", stream.get_users())
 
+    def test_get_most_common_word(self):
+        stream = get_conversation()
+
+        print stream.get_most_common_words(2)
+
 if __name__ == "__main__":
     unittest.main()
