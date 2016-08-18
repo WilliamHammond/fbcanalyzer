@@ -96,5 +96,14 @@ class TestChatStream(unittest.TestCase):
                             .get_most_common_words(1)[0][0]
         self.assertEqual(most_common, "strokes")
 
+    def test_find_first_instance(self):
+        stream = get_conversation()
+        msg = {u'text': u'The strokes strokes?',
+               u'user': u'user1',
+               u'date_time': u'2016-07-30T14:50:00'}
+        fst_instance = stream.remove_punctuation()\
+                             .find_first_instance_word("strokes")
+        self.assertEqual(fst_instance, msg)
+
 if __name__ == "__main__":
     unittest.main()
