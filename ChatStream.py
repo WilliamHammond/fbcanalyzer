@@ -76,7 +76,6 @@ class ChatStream(object):
         for entry in self.data:
             new_entry = dict(entry)
             new_entry["text"] = " ".join(re.split("\W+", entry["text"]))
-            print new_entry["text"]
             new_data.append(new_entry)
         return ChatStream(new_data)
 
