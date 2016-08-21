@@ -161,9 +161,8 @@ class ChatStream(object):
 
     def find_first_instance_phrase(self, phrase):
         for entry in self.data[::-1]:
-            sentence = " ".join(entry['text'])
-            if phrase in sentence:
-                return (entry['user'], entry['date_time'], entry['text'])
+            if phrase in entry["text"]:
+                return entry
         print "Phrase not found."
 
     def _flatten(self, lst):
