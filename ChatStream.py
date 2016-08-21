@@ -94,7 +94,8 @@ class ChatStream(object):
         return [msg['text'] for msg in self.data]
 
     def get_word_lst(self):
-        return self._flatten([w.split() for w in self.get_message_lst()])
+        return self._flatten([self.tknzr.tokenize(w) for w in
+                              self.get_message_lst()])
 
     def get_year_from_iso(self, iso_year):
         return datetime.strptime(iso_year, "%Y-%m-%dT%H:%M:%S").year
