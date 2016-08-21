@@ -157,7 +157,7 @@ class ChatStream(object):
 
     def find_first_instance_word(self, word):
         for entry in self.data[::-1]:
-            if word in entry['text']:
+            if word in entry['text'].split():
                 return entry
         print "Word not found."
 
