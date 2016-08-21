@@ -153,6 +153,8 @@ class ChatStream(object):
         for entry in result:
             print result_format % (entry['user'], entry['word_count'])
 
+        return result
+
     def find_first_instance_word(self, word):
         for entry in self.data[::-1]:
             if word in entry['text']:
