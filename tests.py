@@ -98,12 +98,23 @@ class TestChatStream(unittest.TestCase):
 
     def test_find_first_instance(self):
         stream = get_conversation()
-        msg = {u'text': u'The strokes strokes?',
-               u'user': u'user1',
-               u'date_time': u'2016-07-30T14:50:00'}
-        fst_instance = stream.remove_punctuation()\
-                             .find_first_instance_word("strokes")
+        msg = {u'text': u'The strokes?',
+                        u'user': u'user1',
+                        u'date_time': u'2014-07-30T14:50:00'}
+        fst_instance = stream.find_first_instance_word("strokes")
+
         self.assertEqual(fst_instance, msg)
+
+    def test_find_first_instance_phrase(self):
+        stream = get_conversation()
+
+        msg = {u'text': u'Ooohhhhh yeaaaah',
+               u'user': u'user2',
+               u'date_time': u'2016-07-30T14:52:00'}
+        fst_phrase = stream.find_first_instance_phrase('Ooohhhhh yeaaaah')
+
+        self.assertEqual(fst_phrase, msg)
+
 
 if __name__ == "__main__":
     unittest.main()

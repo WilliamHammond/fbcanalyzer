@@ -76,6 +76,7 @@ class ChatStream(object):
         for entry in self.data:
             new_entry = dict(entry)
             new_entry["text"] = " ".join(re.split("\W+", entry["text"]))
+            print new_entry["text"]
             new_data.append(new_entry)
         return ChatStream(new_data)
 
@@ -156,7 +157,7 @@ class ChatStream(object):
     def find_first_instance_word(self, word):
         for entry in self.data[::-1]:
             if word in entry['text']:
-                return (entry['user'], entry['date_time'], entry['text'])
+                return entry
         print "Word not found."
 
     def find_first_instance_phrase(self, phrase):
