@@ -9,6 +9,7 @@ import re
 from nltk import Text
 from nltk.util import ngrams
 from nltk.corpus import stopwords
+from nltk.tokenize import TweetTokenizer
 
 from collections import Counter
 from sets import Set
@@ -25,6 +26,7 @@ PUNCTUATION = string.punctuation
 class ChatStream(object):
     def __init__(self, data):
         self.data = data
+        self.tknzr = TweetTokenizer(preserve_case=False)
 
     def get_data(self):
         return self.data
@@ -157,10 +159,11 @@ class ChatStream(object):
 
     def find_first_instance_word(self, word):
         for entry in self.data[::-1]:
-            if word in entry['text'].split():
+            if word in self.tknzr.tokenize(entry['text']):
                 return entry
         print "Word not found."
 
+    # this is super broken don't use it
     def find_first_instance_phrase(self, phrase):
         for entry in self.data[::-1]:
             if phrase in entry["text"]:
