@@ -3,9 +3,9 @@ from ChatStream import ChatStream
 
 
 MESSAGE_COUNT = 7
-WORD_COUNT = 19
+WORD_COUNT = 15
 WORD_COUNT_USER1 = 9
-WORD_COUNT_USER2 = 10
+WORD_COUNT_USER2 = 6
 
 
 def get_conversation():

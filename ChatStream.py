@@ -7,6 +7,7 @@ import string
 import re
 
 from nltk import Text
+from nltk import pos_tag
 from nltk.util import ngrams
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
@@ -82,7 +83,9 @@ class ChatStream(object):
         return ChatStream(new_data)
 
     def get_n_gram(self, n):
-        return list(ngrams(self.get_message_lst(), n))
+        tags = ["NN", "NNS", "JJ", "JJR", "JJS"]
+        #return list(ngrams(self.get_message_lst(), n))
+        return list(ngrams(self._get_tags(tags), n))
 
     def get_most_common_words(self, n):
         return Counter(self.get_word_lst()).most_common(n)
@@ -107,7 +110,7 @@ class ChatStream(object):
         return Set([w['user'] for w in self.data])
 
     def get_word_count(self):
-        return len(self.get_word_lst())
+        return len(self.remove_punctuation().get_word_lst())
 
     def occurence_count_by_phrase(self, phrase):
         count = 0
@@ -173,3 +176,8 @@ class ChatStream(object):
 
     def _flatten(self, lst):
         return [item for sublist in lst for item in sublist]
+
+    def _get_tags(self, tags):
+        print pos_tag(self.get_word_lst())
+        return [word for (word, tag) in pos_tag(self.get_word_lst())
+                if tag in tags]
