@@ -82,10 +82,12 @@ class ChatStream(object):
             new_data.append(new_entry)
         return ChatStream(new_data)
 
-    def get_n_gram(self, n):
+    def get_n_grams(self, n):
         tags = ["NN", "NNS", "JJ", "JJR", "JJS"]
-        #return list(ngrams(self.get_message_lst(), n))
         return list(ngrams(self._get_tags(tags), n))
+
+    def most_common_n_grams(self, n, m):
+        return Counter(self.get_n_grams(n)).most_common(m)
 
     def get_most_common_words(self, n):
         return Counter(self.get_word_lst()).most_common(n)
@@ -117,7 +119,6 @@ class ChatStream(object):
         for entry in self.data:
             sentence = self.tknzr.tokenize(entry['text'])
             if phrase in sentence:
-                print entry
                 count += 1
         return count
 
@@ -154,6 +155,5 @@ class ChatStream(object):
         return [item for sublist in lst for item in sublist]
 
     def _get_tags(self, tags):
-        print pos_tag(self.get_word_lst())
         return [word for (word, tag) in pos_tag(self.get_word_lst())
                 if tag in tags]
