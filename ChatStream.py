@@ -110,13 +110,14 @@ class ChatStream(object):
         return Set([w['user'] for w in self.data])
 
     def get_word_count(self):
-        return len(self.remove_punctuation().get_word_lst())
+        return len(self.get_word_lst())
 
     def occurence_count_by_phrase(self, phrase):
         count = 0
         for entry in self.data:
-            sentence = " ".join(entry['text'])
+            sentence = self.tknzr.tokenize(entry['text'])
             if phrase in sentence:
+                print entry
                 count += 1
         return count
 
@@ -135,15 +136,15 @@ class ChatStream(object):
             result.append(entry)
 
         result = sorted(result, key=lambda k: k['word_count'])[::-1]
-
-        print "Occurence count for %s" % phrase
+        print phrases
+        print "Occurence count for %s" % " ".join(phrases)
         print "_____________________\n"
 
         for entry in result:
             if entry['word_count'] > 0:
                 print result_format % (entry['user'], entry['word_count'])
 
-    def word_count_all_users(self):
+    def word_count_all_users(self, words):
         result_format = "%s : %s"
         result = []
 
