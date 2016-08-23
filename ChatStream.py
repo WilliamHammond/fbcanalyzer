@@ -144,34 +144,9 @@ class ChatStream(object):
             if entry['word_count'] > 0:
                 print result_format % (entry['user'], entry['word_count'])
 
-    def word_count_all_users(self, words):
-        result_format = "%s : %s"
-        result = []
-
-        for user in self.get_users():
-            entry = dict()
-            entry['user'] = user
-            entry['word_count'] = self.by_user(user).get_word_count()
-
-            result.append(entry)
-
-        result = sorted(result, key=lambda k: k['word_count'])[::-1]
-
-        for entry in result:
-            print result_format % (entry['user'], entry['word_count'])
-
-        return result
-
-    def find_first_instance_word(self, word):
-        for entry in self.data[::-1]:
-            if word in self.tknzr.tokenize(entry['text']):
-                return entry
-        print "Word not found."
-
-    # this is super broken don't use it
     def find_first_instance_phrase(self, phrase):
         for entry in self.data[::-1]:
-            if phrase in entry["text"]:
+            if phrase in self.tknzr.tokenize(entry['text']):
                 return entry
         print "Phrase not found."
 
