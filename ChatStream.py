@@ -1,16 +1,16 @@
 # ChatStream.py
 # William Hammond
-# 8/05/2016
 
 
 import string
 import re
 
-from nltk import Text
 from nltk import pos_tag
 from nltk.util import ngrams
 from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
+from nltk.collocations import BigramAssocMeasures, BigramCollocationFinder
+from nltk.collocations import TrigramAssocMeasures, TrigramCollocationFinder
 
 from collections import Counter
 from sets import Set
@@ -93,7 +93,7 @@ class ChatStream(object):
         return Counter(self.get_word_lst()).most_common(n)
 
     def get_text(self):
-        return Text(self.get_message_lst())
+        return ". ".join([msg["text"] for msg in self.data])
 
     def get_message_lst(self):
         return [msg['text'] for msg in self.data]
@@ -113,6 +113,26 @@ class ChatStream(object):
 
     def get_word_count(self):
         return len(self.get_word_lst())
+
+    def best_n_bigrams(self, n, method="pmi"):
+        bigram_measures = BigramAssocMeasures()
+        tokens = self.get_word_lst()
+        finder = BigramCollocationFinder.from_words(tokens)
+
+        if method == "pmi":
+            return finder.nbest(bigram_measures.pmi, n)
+        if method == "raw_freq":
+            return finder.nbest(bigram_measures.raw_freq, n)
+
+    def best_n_trigrams(self, n, method="pmi"):
+        trigram_measures = TrigramAssocMeasures()
+        tokens = self.get_word_lst()
+        finder = TrigramCollocationFinder.from_words(tokens)
+
+        if method == "pmi":
+            return finder.nbest(trigram_measures.pmi, n)
+        if method == "raw_freq":
+            return finder.nbest(trigram_measures.raw_freq, n)
 
     def occurence_count_by_phrase(self, phrase):
         count = 0
