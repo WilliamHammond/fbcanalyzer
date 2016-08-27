@@ -167,7 +167,7 @@ class ChatStream(object):
 
     def find_first_instance_phrase(self, phrase):
         for entry in self.data[::-1]:
-            if phrase in self.tknzr.tokenize(entry['text']):
+            if re.search("(?<![\w])%s(?![\w])" % phrase, entry["text"]):
                 return entry
         print "Phrase not found."
 
