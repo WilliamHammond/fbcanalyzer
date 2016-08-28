@@ -5,6 +5,7 @@
 import string
 import re
 import numpy as np
+import matplotlib.pyplot as plt
 
 from nltk import pos_tag
 from nltk.util import ngrams
@@ -182,6 +183,9 @@ class ChatStream(object):
 
     def phrase_frequency_over_time(self, phrase, time_interval):
         msgs = self.find_all_instances_phrase(phrase)
+        if not msgs:
+            print "Phrase never used"
+            return -1
         dates = [dateutil.parser.parse(msg['date_time']) for msg in msgs]
         time_interval = timedelta(days=time_interval)
 
@@ -200,8 +204,11 @@ class ChatStream(object):
 
         hist, bin_edges = np.histogram(to_timestamp(dates))
 
-        print hist, from_timestamp(bin_edges)
-        return hist
+        plt.title("Frequency count for phrase %s" % phrase)
+        plt.bar(from_timestamp(bin_edges[0:len(bin_edges) - 1]),
+                hist, width=10)
+        plt.show()
+        return hist, from_timestamp(bin_edges)
 
     def _flatten(self, lst):
         return [item for sublist in lst for item in sublist]
