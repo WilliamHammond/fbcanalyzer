@@ -194,7 +194,8 @@ class ChatStream(object):
             bins.append(current)
             current += time_interval
 
-        to_timestamp = np.vectorize(lambda x: (x - datetime(1970, 1, 1)).total_seconds())
+        to_timestamp = np.vectorize(lambda x: (x - datetime(1970, 1, 1))
+                                    .total_seconds())
         from_timestamp = np.vectorize(lambda x: datetime.utcfromtimestamp(x))
 
         hist, bin_edges = np.histogram(to_timestamp(dates))
