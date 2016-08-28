@@ -1,4 +1,4 @@
-# fbcanalyzer - FB Chat Analyzer
+# fbcanalyzer - FB Chat Analyzer 
 
 This package is meant to make it easy to get a detailed look at your personal fb conversations.
 
