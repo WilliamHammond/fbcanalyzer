@@ -40,6 +40,7 @@ def get_messages(path):
     with open(path, 'rb') as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
+            row['text'] = row['text'].lower()
             msgs.append(row)
     return msgs
 

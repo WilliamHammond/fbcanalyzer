@@ -95,9 +95,6 @@ class ChatStream(object):
     def get_most_common_words(self, n):
         return Counter(self.get_word_lst()).most_common(n)
 
-    def get_text(self):
-        return ". ".join([msg["text"] for msg in self.data])
-
     def get_message_lst(self):
         return [msg['text'] for msg in self.data]
 
@@ -181,11 +178,11 @@ class ChatStream(object):
                 result.append(entry)
         return result
 
-    def phrase_frequency_over_time(self, phrase, time_interval):
+    def phrase_frequency_over_time(self, phrase, time_interval, plot=False):
         msgs = self.find_all_instances_phrase(phrase)
         if not msgs:
-            print "Phrase never used"
-            return -1
+            raise Exception("Phrase is never used")
+
         dates = [dateutil.parser.parse(msg['date_time']) for msg in msgs]
         time_interval = timedelta(days=time_interval)
 
@@ -201,13 +198,14 @@ class ChatStream(object):
         to_timestamp = np.vectorize(lambda x: (x - datetime(1970, 1, 1))
                                     .total_seconds())
         from_timestamp = np.vectorize(lambda x: datetime.utcfromtimestamp(x))
-
         hist, bin_edges = np.histogram(to_timestamp(dates))
 
-        plt.title("Frequency count for phrase %s" % phrase)
-        plt.bar(from_timestamp(bin_edges[0:len(bin_edges) - 1]),
-                hist, width=10)
-        plt.show()
+        if plot:
+            plt.title("Frequency count for phrase %s" % phrase)
+            plt.bar(from_timestamp(bin_edges[0:len(bin_edges) - 1]),
+                    hist, width=10)
+            plt.show()
+
         return hist, from_timestamp(bin_edges)
 
     def _flatten(self, lst):
