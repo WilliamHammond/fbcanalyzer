@@ -4,6 +4,7 @@
 
 import string
 import re
+import numpy as np
 
 from nltk import pos_tag
 from nltk.util import ngrams
@@ -15,7 +16,8 @@ from nltk.collocations import TrigramAssocMeasures, TrigramCollocationFinder
 from collections import Counter
 from sets import Set
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import dateutil.parser
 
 STOP_WORDS = stopwords.words('english') + \
     ['i\'m', 'want', 'dont', 'don\'t', 'go', 'going', 'good', 'also',
@@ -170,6 +172,35 @@ class ChatStream(object):
             if re.search("(?<![\w])%s(?![\w])" % phrase, entry["text"]):
                 return entry
         print "Phrase not found."
+
+    def find_all_instances_phrase(self, phrase):
+        result = []
+        for entry in self.data[::-1]:
+            if re.search("(?<![\w])%s(?![\w])" % phrase, entry["text"]):
+                result.append(entry)
+        return result
+
+    def phrase_frequency_over_time(self, phrase, time_interval):
+        msgs = self.find_all_instances_phrase(phrase)
+        dates = [dateutil.parser.parse(msg['date_time']) for msg in msgs]
+        time_interval = timedelta(days=time_interval)
+
+        first_date = dates[0]
+        last_date = dates[-1]
+
+        bins = []
+        current = first_date
+        while current < last_date:
+            bins.append(current)
+            current += time_interval
+
+        to_timestamp = np.vectorize(lambda x: (x - datetime(1970, 1, 1)).total_seconds())
+        from_timestamp = np.vectorize(lambda x: datetime.utcfromtimestamp(x))
+
+        hist, bin_edges = np.histogram(to_timestamp(dates))
+
+        print hist, from_timestamp(bin_edges)
+        return hist
 
     def _flatten(self, lst):
         return [item for sublist in lst for item in sublist]

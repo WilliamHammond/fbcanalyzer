@@ -120,7 +120,7 @@ class TestChatStream(unittest.TestCase):
     def test_word_count_all_users(self):
         stream = get_conversation()
 
-        print stream.word_count_all_users()
+        print stream.phrase_count_all_users()
 
 
 if __name__ == "__main__":
