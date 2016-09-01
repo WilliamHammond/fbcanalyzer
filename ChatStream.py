@@ -17,14 +17,27 @@ from nltk.collocations import TrigramAssocMeasures, TrigramCollocationFinder
 from collections import Counter
 from sets import Set
 
-from datetime import datetime, timedelta
+from datetime import datetime
 import dateutil.parser
+
+intervals = {
+    'weeks': 604800,
+    'days': 86400,
+    'hours': 3600,
+    'minutes': 60,
+    'seconds': 1
+    }
+
 
 STOP_WORDS = stopwords.words('english') + \
     ['i\'m', 'want', 'dont', 'don\'t', 'go', 'going', 'good', 'also',
      'got', 'though', 'know', 'want', 'there', 'really', 'right',
      'feel', 'let', 'tomorrow']
 PUNCTUATION = string.punctuation
+
+to_timestamp = np.vectorize(lambda x: (x - datetime(1970, 1, 1))
+                            .total_seconds())
+from_timestamp = np.vectorize(lambda x: datetime.utcfromtimestamp(x))
 
 
 class ChatStream(object):
@@ -169,7 +182,7 @@ class ChatStream(object):
         for entry in self.data[::-1]:
             if re.search("(?<![\w])%s(?![\w])" % phrase, entry["text"]):
                 return entry
-        print "Phrase not found."
+        raise Exception("Phrase not found.")
 
     def find_all_instances_phrase(self, phrase):
         result = []
@@ -178,35 +191,34 @@ class ChatStream(object):
                 result.append(entry)
         return result
 
-    def phrase_frequency_over_time(self, phrase, time_interval, plot=False):
+    def phrase_frequency_over_time(self, phrase, time_interval=1,
+                                   time_unit="weeks", plot=False):
         msgs = self.find_all_instances_phrase(phrase)
-        if not msgs:
-            raise Exception("Phrase is never used")
 
-        dates = [dateutil.parser.parse(msg['date_time']) for msg in msgs]
-        time_interval = timedelta(days=time_interval)
+        time_interval = intervals[time_unit] * time_interval
 
-        first_date = dates[0]
-        last_date = dates[-1]
+        start_date = to_timestamp(
+                dateutil.parser.parse(self.data[-1]['date_time']))
+        end_date = to_timestamp(
+                dateutil.parser.parse(self.data[1]['date_time']))
 
-        bins = []
-        current = first_date
-        while current < last_date:
-            bins.append(current)
-            current += time_interval
+        bin_edges = [i for i in xrange(start_date, end_date, time_interval)]
+        hist = [0] * (len(bin_edges) - 1)
 
-        to_timestamp = np.vectorize(lambda x: (x - datetime(1970, 1, 1))
-                                    .total_seconds())
-        from_timestamp = np.vectorize(lambda x: datetime.utcfromtimestamp(x))
-        hist, bin_edges = np.histogram(to_timestamp(dates))
+        for i in xrange(0, len(bin_edges) - 1):
+            for msg in msgs:
+                date = to_timestamp(
+                        dateutil.parser.parse(msg['date_time']))
+                if date > bin_edges[i] and date <= bin_edges[i+1]:
+                    hist[i] += 1
 
         if plot:
             plt.title("Frequency count for phrase %s" % phrase)
-            plt.bar(from_timestamp(bin_edges[0:len(bin_edges) - 1]),
-                    hist, width=10)
+            bin_edges = from_timestamp(bin_edges)
+            plt.bar(bin_edges[:-1], hist, width=1)
             plt.show()
 
-        return hist, from_timestamp(bin_edges)
+        return hist, bin_edges
 
     def _flatten(self, lst):
         return [item for sublist in lst for item in sublist]
