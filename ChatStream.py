@@ -13,6 +13,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import TweetTokenizer
 from nltk.collocations import BigramAssocMeasures, BigramCollocationFinder
 from nltk.collocations import TrigramAssocMeasures, TrigramCollocationFinder
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 from collections import Counter
 from sets import Set
@@ -111,9 +112,9 @@ class ChatStream(object):
     def get_message_lst(self):
         return [msg['text'] for msg in self.data]
 
-    def get_word_lst(self):
-        return self._flatten([self.tknzr.tokenize(w) for w in
-                              self.get_message_lst()])
+    def get_word_lst(self, tags=None):
+        return [word for (word, tag) in pos_tag(self.get_word_lst())
+                if tag in tags]
 
     def get_year_from_iso(self, iso_year):
         return datetime.strptime(iso_year, "%Y-%m-%dT%H:%M:%S").year
@@ -219,6 +220,44 @@ class ChatStream(object):
             plt.show()
 
         return hist, bin_edges
+
+    def get_mean_sentiment(self, exclude_neutral=True):
+        sid = SentimentIntensityAnalyzer()
+        tot_score = 0
+        if exclude_neutral:
+            message_count = 0
+            for sentence in self.get_message_lst():
+                ss = sid.polarity_scores(sentence)
+                if ss['compound'] != 0:
+                    tot_score += ss['compound']
+                    message_count += 1
+        else:
+            for sentence in self.get_message_lst():
+                ss = sid.polarity_scores(sentence)
+                tot_score += ss['compound']
+            message_count = len(self.get_message_lst())
+
+        return tot_score / message_count
+
+    def positive_msg_count(self):
+        sid = SentimentIntensityAnalyzer()
+        msg_count = 0
+        for sentence in self.get_message_lst():
+            ss = sid.polarity_scores(sentence)
+            if ss['compound'] > 0:
+                msg_count += 1
+
+        return msg_count
+
+    def negative_msg_count(self):
+        sid = SentimentIntensityAnalyzer()
+        msg_count = 0
+        for sentence in self.get_message_lst():
+            ss = sid.polarity_scores(sentence)
+            if ss['compound'] < 0:
+                msg_count += 1
+
+        return msg_count
 
     def _flatten(self, lst):
         return [item for sublist in lst for item in sublist]
