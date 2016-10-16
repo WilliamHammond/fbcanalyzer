@@ -2,8 +2,10 @@
 # William Hammond
 
 
-import string
+import dateutil.parser
 import re
+import string
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -17,9 +19,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 from collections import Counter
 from sets import Set
-
 from datetime import datetime
-import dateutil.parser
 
 intervals = {
     'weeks': 604800,
@@ -113,8 +113,7 @@ class ChatStream(object):
         return [msg['text'] for msg in self.data]
 
     def get_word_lst(self, tags=None):
-        return [word for (word, tag) in pos_tag(self.get_word_lst())
-                if tag in tags]
+        return self._flatten([msg.split() for msg in self.get_message_lst()])
 
     def get_year_from_iso(self, iso_year):
         return datetime.strptime(iso_year, "%Y-%m-%dT%H:%M:%S").year

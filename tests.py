@@ -3,7 +3,7 @@ from ChatStream import ChatStream
 
 
 MESSAGE_COUNT = 7
-WORD_COUNT = 15
+WORD_COUNT = 19
 WORD_COUNT_USER1 = 9
 WORD_COUNT_USER2 = 6
 
@@ -116,12 +116,6 @@ class TestChatStream(unittest.TestCase):
         fst_phrase = stream.find_first_instance_phrase('Ooohhhhh yeaaaah')
 
         self.assertEqual(fst_phrase, msg)
-
-    def test_word_count_all_users(self):
-        stream = get_conversation()
-
-        print stream.phrase_count_all_users()
-
 
 if __name__ == "__main__":
     unittest.main()
